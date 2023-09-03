@@ -1,0 +1,45 @@
+pip install streamlit wordcloud matplotlib
+
+import streamlit as st
+from wordcloud import WordCloud, STOPWORDS
+import matplotlib.pyplot as plt
+
+def generate_wordcloud(text, custom_stopwords=None):
+    stopwords = set(STOPWORDS)
+    if custom_stopwords:
+        stopwords.update(custom_stopwords.split(','))
+
+    wordcloud = WordCloud(width=800, height=400, background_color='white', stopwords=stopwords).generate(text)
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    st.pyplot()
+
+def main():
+    st.title("Word Cloud Generator")
+
+    # Upload a text file
+    uploaded_file = st.file_uploader("Upload a text file", type=["txt"])
+
+    # Allow users to provide custom stopwords
+    custom_stopwords = st.text_input("Custom Stopwords (comma-separated)", "")
+
+    if uploaded_file is not None:
+        text = uploaded_file.read().decode("utf-8")
+
+        # Display the uploaded text
+        st.header("Uploaded Text")
+        st.text_area("Text", text, height=200)
+
+        # Display custom stopwords
+        if custom_stopwords:
+            st.header("Custom Stopwords")
+            st.write("Custom Stopwords:", custom_stopwords)
+
+        # Generate and display the word cloud
+        st.header("Word Cloud")
+        generate_wordcloud(text, custom_stopwords)
+
+if __name__ == "__main__":
+    main()
+
